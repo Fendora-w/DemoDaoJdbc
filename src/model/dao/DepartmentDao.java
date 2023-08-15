@@ -1,9 +1,9 @@
 package model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import model.entities.Department;
-import model.entities.Seller;
 
 public interface DepartmentDao {
 	
@@ -11,6 +11,6 @@ public interface DepartmentDao {
 	void update(Department obj);
 	void deleteById(Integer id);
 	Department findById(Integer id);
-	List<Seller> findAll();
-	List<Seller> findByDepartment(Department department);
+	Map<Integer, Department> findAll();
+	List<Department> findByDepartment(Department department);
 }
