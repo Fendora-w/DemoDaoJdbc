@@ -25,7 +25,37 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void insert(Department obj) {
-		// TODO Auto-generated method stub
+		
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("INSERT INTO  department(Name)values(?) ", Statement.RETURN_GENERATED_KEYS);
+			st.setString(1, obj.getName());
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+		        if (rs.next()) {
+		            int generatedId = rs.getInt(1); // Recupera o valor do ID gerado
+		            obj.setId(generatedId); // Define o ID gerado no objeto
+		            System.out.println("Insertion successful!");
+		        } else {
+		            System.out.println("Failed to get generated ID.");
+		        }
+		        DB.closeResultSet(rs);
+
+			}
+			else {
+				throw new DbException("Unexpected error! No rows affected!");
+			}
+		}
+		catch(SQLException e) {
+			e.getMessage();
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
