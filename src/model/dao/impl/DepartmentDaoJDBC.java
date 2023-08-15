@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,8 +109,39 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public List<Department> findByDepartment(Department department) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			st = conn.prepareStatement("SELECT Id, Name FROM department WHERE Id > ? "
+	                                 + "ORDER BY Name");
+			st.setInt(1, department.getId());
+			rs = st.executeQuery();
+			
+			List<Department> list = new ArrayList<>();
+			
+			while(rs.next()) {
+				
+				if(!list.contains(rs.getInt("Id"))) {
+					Department dep = new Department(rs.getInt("Id"), rs.getString("Name"));
+					list.add(dep);
+				}
+			}
+			
+			return list;
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+		
+		
 	}
 
 }
