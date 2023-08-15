@@ -25,35 +25,32 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void insert(Department obj) {
-		
+
 		PreparedStatement st = null;
-		
+
 		try {
 			st = conn.prepareStatement("INSERT INTO  department(Name)values(?) ", Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, obj.getName());
-			
-			int rowsAffected = st.executeUpdate();
-			
-			if(rowsAffected > 0) {
-				ResultSet rs = st.getGeneratedKeys();
-		        if (rs.next()) {
-		            int generatedId = rs.getInt(1); // Recupera o valor do ID gerado
-		            obj.setId(generatedId); // Define o ID gerado no objeto
-		            System.out.println("Insertion successful!");
-		        } else {
-		            System.out.println("Failed to get generated ID.");
-		        }
-		        DB.closeResultSet(rs);
 
-			}
-			else {
+			int rowsAffected = st.executeUpdate();
+
+			if (rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int generatedId = rs.getInt(1); // Recupera o valor do ID gerado
+					obj.setId(generatedId); // Define o ID gerado no objeto
+					System.out.println("Insertion successful!");
+				} else {
+					System.out.println("Failed to get generated ID.");
+				}
+				DB.closeResultSet(rs);
+
+			} else {
 				throw new DbException("Unexpected error! No rows affected!");
 			}
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.getMessage();
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 
@@ -61,36 +58,31 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void update(Department obj) {
-		
+
 		PreparedStatement st = null;
-		
+
 		try {
-			st = conn.prepareStatement(
-					"UPDATE department "
-				   +"SET Name = ? "
-				   +"where Id = ?", Statement.RETURN_GENERATED_KEYS);
-			
+			st = conn.prepareStatement("UPDATE department " + "SET Name = ? " + "where Id = ?",
+					Statement.RETURN_GENERATED_KEYS);
+
 			st.setString(1, obj.getName());
 			st.setInt(2, obj.getId());
-			
-			int rowsAffected = st.executeUpdate();  
-			
-			if(rowsAffected > 0) {
+
+			int rowsAffected = st.executeUpdate();
+
+			if (rowsAffected > 0) {
 				ResultSet rs = st.getGeneratedKeys();
-				if(rs.next()) {
-					int id  = rs.getInt(1);
+				if (rs.next()) {
+					int id = rs.getInt(1);
 					obj.setId(id);
 				}
 				DB.closeResultSet(rs);
 			}
-			
-			
-			
-		}
-		catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.getMessage();
 		}
-		
+
 		finally {
 			DB.closeStatement(st);
 		}
@@ -99,7 +91,27 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+
+		PreparedStatement st = null;
+
+		try {
+
+			st = conn.prepareStatement("DELETE FROM department WHERE Id = ?", Statement.RETURN_GENERATED_KEYS);
+			st.setInt(1, id);
+
+			int rowsAffected = st.executeUpdate();
+
+			System.out.println("Done! Rows affected: " + rowsAffected);
+
+		}
+
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+
+		finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
@@ -110,7 +122,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		ResultSet rs = null;
 
 		try {
-			
+
 			st = conn.prepareStatement("SELECT Id, Name FROM department WHERE Id = ? ",
 					Statement.RETURN_GENERATED_KEYS);
 			st.setInt(1, id);
@@ -145,18 +157,16 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 			Map<Integer, Department> map = new HashMap<>();
 			rs = st.executeQuery();
-   
-            
+
 			while (rs.next()) {
 
-				if(!map.containsKey(rs.getInt("Id"))) {
+				if (!map.containsKey(rs.getInt("Id"))) {
 					Department dep = new Department(rs.getInt("Id"), rs.getString("Name"));
 					map.put(rs.getInt("Id"), dep);
 				}
-				
+
 			}
-			
-			
+
 			return map;
 
 		} catch (SQLException e) {
@@ -171,39 +181,36 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public List<Department> findByDepartment(Department department) {
-		
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
+
 		try {
-			
-			st = conn.prepareStatement("SELECT Id, Name FROM department WHERE Id > ? "
-	                                 + "ORDER BY Name");
+
+			st = conn.prepareStatement("SELECT Id, Name FROM department WHERE Id > ? " + "ORDER BY Name");
 			st.setInt(1, department.getId());
 			rs = st.executeQuery();
-			
+
 			List<Department> list = new ArrayList<>();
-			
-			while(rs.next()) {
-				
-				if(!list.contains(rs.getInt("Id"))) {
+
+			while (rs.next()) {
+
+				if (!list.contains(rs.getInt("Id"))) {
 					Department dep = new Department(rs.getInt("Id"), rs.getString("Name"));
 					list.add(dep);
 				}
 			}
-			
+
 			return list;
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		}
-		
+
 		finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
-		
-		
+
 	}
 
 }

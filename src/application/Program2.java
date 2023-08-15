@@ -42,13 +42,15 @@ public class Program2 {
 		departmentDao.insert(insertDepartment);
 		System.out.println("Inserted! new id = "+ insertDepartment.getId());*/
 		
-		System.out.println("=== Test 5 : update ===");
+		/*System.out.println("=== Test 5 : update ===");
 		department = departmentDao.findById(8);
 		department.setName("Papel");
 		departmentDao.update(department);
-		System.out.println("Update = "+ department.getId());
+		System.out.println("Update = "+ department.getId());*/
 		
-		
+		System.out.println("=== Test 5 : delete ===");
+		departmentDao.deleteById(28);
+	
 	}
 
 }
