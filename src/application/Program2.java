@@ -36,11 +36,18 @@ public class Program2 {
 		List<Department> list = departmentDao.findByDepartment(department);
 		list.forEach(System.out::println);
 		
-		System.out.println("Insertion successful!");
+		/*System.out.println("Insertion successful!");
 		System.out.println("=== Test 4 : findByDepartment ===");
 		Department insertDepartment = new Department(null, "Library"); 
 		departmentDao.insert(insertDepartment);
-		System.out.println("Inserted! new id = "+ insertDepartment.getId());
+		System.out.println("Inserted! new id = "+ insertDepartment.getId());*/
+		
+		System.out.println("=== Test 5 : update ===");
+		department = departmentDao.findById(8);
+		department.setName("Papel");
+		departmentDao.update(department);
+		System.out.println("Update = "+ department.getId());
+		
 		
 	}
 
